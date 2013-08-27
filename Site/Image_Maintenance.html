@@ -1,0 +1,71 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//deleteing comments
+?>
+<center><h1>Image Maintenance</h1></center>
+<div id="sidescroll3">
+<?php
+//need to get all of the images
+$image_query=mysql_query("select * from IMAGE, AUCTIONS where AUCTIONS.AUCTION_NUM=IMAGE.AUCTION_NUM");
+while ($row=mysql_fetch_array($image_query))
+{
+$id=$row['IMAGE_NUM'];
+$auction=$row['AUCTION_NUM'];
+?>	
+	<form method="post">
+	<table >
+		<tr>
+		  <td><?php echo "{$row['USERNAME']}"; ?></td>
+		  <td><?php echo "{$row['IMAGE_TYPE']}"; ?></td>
+		  
+		  </tr>
+		  <tr>
+		    <td><img src="getimage.php?id=<?=$id?>" width="175" height="200"alt="Image not found"></a></td>
+		  </tr>
+		  <tr>
+		  	<input type="hidden" name="auction" id="auction" value="<?=$auction?>" />
+			<input type="hidden" name="id" id="id" value="<?=$id?>" />
+			<input type='submit' value='Delete'  name='delete' id='delete' onclick="return confirm('Are you sure?');" />
+		  </tr>
+		  </table>
+		  </form>
+
+<?php
+
+
+
+}
+
+?>
+</div>
+<div id="delete_div"> </div>
+<?php
+if(isset($_POST['delete']))
+{
+$id=$_POST['id'];
+$Auction_num=$_POST['auction'];
+//delete where the id number matchs
+$delete_query=mysql_query("delete from IMAGE where IMAGE_NUM='$id'");
+	mysql_query("LOCK TABLES BUYER WRITE;");
+		$update_query=mysql_query("UPDATE BUYER SET COMMENT_NUM='0' where AUCTION_NUM='$Auction_num'");
+		mysql_query("UNLOCK_TABLES;");
+if($delete_query)
+		  {
+			
+			?>
+				<script>
+				$('#delete_div').html('The record was deleted.');
+				</script>
+			<?php
+		  }
+		  else
+		  {
+				die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		  }
+
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

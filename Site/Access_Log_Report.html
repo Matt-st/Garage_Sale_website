@@ -1,0 +1,52 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+?>
+<h1>Access Log Report</h1>
+<br>
+<br>
+<br>
+<center><table border="1" >
+			<tr>
+			<td><p>Username</p></td>
+			<td><p>URL</p></td>
+			<td><p>Enter Time</p></td>
+			<td><p>Exit Time</p></td>
+			<td><p>Enter Date</p></td>
+			<td><p>Leave Date</p></td>
+			</tr>
+<?php
+
+//need to find the category
+$active_query=mysql_query("select * from ACCESS_LOG ");
+while($row=mysql_fetch_array($active_query))
+{//print out in a table tyhe information for the access log
+
+	
+?>	
+	
+	 <tr>
+	 <td><?php echo "{$row['USERNAME']}"; ?></td>
+	<td><?php echo "{$row['URL']}"; ?></td>
+	<td><?php echo "{$row['TIME_ARRIVAL']}"; ?></td>
+	<td><?php echo "{$row['LEAVE_TIME']}"; ?></td>
+	<td><?php echo "{$row['DATE_ARRIVAL']}"; ?></td>
+	<td><?php echo "{$row['LEAVE_DATE']}"; ?></td>
+	 
+	
+
+
+
+	</tr>
+
+<?php
+}
+?>
+</table>
+<?php
+
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,56 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//get the categories for a select box
+$result=mysql_query("select CATEGORY from CATEGORIES");
+while($row=mysql_fetch_array($result)){
+		$category=$row['CATEGORY']; 
+		$options.="<OPTION VALUE=\"$category\">".$category."</option>"; 
+	}
+?>
+<script>
+//select a category on clikc function
+$(document).ready(function(){
+	$("#get_auctions").click(function(){
+		$.ajax({
+			type: "POST",
+			url: "check_auction.php",
+			data: "category="+$("#category").val(),
+			success: function(msg){
+			$('#sidescroll3').html(msg);
+			
+			
+			}
+		});
+	})
+});	
+
+</script>
+
+
+Browse Auctions
+
+<select name='categories' id='category'>
+				<option selected>Select Category</option>
+				<?=$options?>
+			</select>
+			<input type='button' id='get_auctions' value='Check Auctions'><br>
+			<div id='sidescroll3'> <h2>Auctions</h2>
+
+<?php
+if(isset($_POST['view']))
+{
+$_SESSION['auction_num']= $_POST['auctionnum'];
+header("location:View_Auction.html");
+
+
+
+}
+?>
+</div>
+<?php
+
+//after button is clicked
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

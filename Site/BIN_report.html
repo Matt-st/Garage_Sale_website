@@ -1,0 +1,41 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+?>
+<h1>All Items Sold by "buy it now" Option</h1>
+<center><table border="1" >
+			<tr>
+			<td><p>Buyer</p></td>
+			<td><p>Item Name</p></td>
+			<td><p>Price</p></td>
+			<td><p>Seller</p></td>
+			</tr>
+<?php
+$bin_query=mysql_query("select * from BUYER where BUY_IT_NOW='1' order by PURCHASE_PRICE");
+while($row=mysql_fetch_array($bin_query))
+{
+	//need to get the auctionnumber
+	$auction_num=$row['AUCTION_NUM'];
+	//query auctions and get info
+	$auctions=mysql_query("select * from AUCTIONS where AUCTION_NUM='$auction_num'");
+	$auctions_row=mysql_fetch_array($auctions);
+?>	
+	
+	 <tr>
+	 <td><?php echo "{$row['USERNAME']}"; ?></td>
+	  <td><?php echo "{$auctions_row['ITEM_NAME']}"; ?></td>
+	  <td><?php echo "{$row['PURCHASE_PRICE']}"; ?></td>
+	  <td><?php echo "{$auctions_row['USERNAME']}"; ?></td>
+	  </tr>
+
+
+<?php
+}
+?>
+</table>
+<?php
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

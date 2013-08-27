@@ -1,0 +1,73 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//deleteing comments
+?>
+<center><h1>Comment Maintenance</h1></center>
+<div id="sidescroll3">
+<?php
+//query to get all the commetns then show them in table form with a delete option
+
+$comments_query=mysql_query("select * from COMMENTS");
+while ($row=mysql_fetch_array($comments_query))
+{
+$id=$row['COMMENT_NUM'];
+$auction=$row['AUCTION_NUM'];
+?>	
+	<form method="post">
+	<table >
+		<tr>
+		  <td><?php echo "{$row['USERNAME']}"; ?></td>
+		  </tr>
+		  <tr>
+		  <td><?php echo "{$row['COMMENT']}"; ?></td>
+		  </tr>
+		  <tr>
+		  <!--hidden values that contain the comment id and the auction id so it can be transferred during the post-->
+		  	<input type="hidden" name="auction" id="auction" value="<?=$auction?>" />
+			<input type="hidden" name="id" id="id" value="<?=$id?>" />
+			<input type='submit' value='Delete'  name='delete' id='delete' onclick="return confirm('Are you sure?');" />
+		  </tr>
+		  </table>
+		  </form>
+
+<?php
+
+
+
+}
+
+?>
+
+</div>
+<div id="delete_div"> </div>
+<?php
+if(isset($_POST['delete']))
+{
+//get the id and auction number from the post then perform the queries to delete the comment and update the buyers table 
+$id=$_POST['id'];
+$Auction_num=$_POST['auction'];
+//delete where the id number matchs
+$delete_query=mysql_query("delete from COMMENTS where COMMENT_NUM='$id'");
+	mysql_query("LOCK TABLES BUYER WRITE;");
+		$update_query=mysql_query("UPDATE BUYER SET COMMENT_NUM='0' where AUCTION_NUM='$Auction_num'");
+		mysql_query("UNLOCK_TABLES;");
+if($delete_query)
+		  {
+			//output that the record was deleted 
+			?>
+				<script>
+				$('#delete_div').html('The record was deleted.');
+				</script>
+			<?php
+		  }
+		  else
+		  {
+				die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		  }
+
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

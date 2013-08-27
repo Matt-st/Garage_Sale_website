@@ -1,0 +1,89 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//deleteing comments
+?>
+<center><h1>User Maintenance</h1></center>
+<div id="sidescroll3">
+<?php
+//need to get all of the images
+$user_query=mysql_query("select * from USER");
+while ($row=mysql_fetch_array($user_query))
+{
+$id=$row['USERNAME'];
+//displaying everything in the user table
+?>	
+	<form method="post">
+	<table >
+		<tr>
+		  <td><?php echo "{$row['USERNAME']}"; ?></td>
+		  <td><?php echo "{$row['FNAME']}"; ?></td>
+		  <td><?php echo "{$row['LNAME']}"; ?></td>
+		  <td><?php echo "{$row['ADDRESS']}"; ?></td>
+		  <td><?php echo "{$row['CITY']}"; ?></td>
+		  </tr>
+		  <tr>
+		    <td><?php echo "{$row['STATE']}"; ?></td>
+			<td><?php echo "{$row['ZIP']}"; ?></td>
+			<td><?php echo "{$row['PHONE']}"; ?></td>
+			<td><?php echo "{$row['EMAIL']}"; ?></td>
+		  </tr>
+		  <tr>
+		  	<input type="hidden" name="id" id="id" value="<?=$id?>" />
+			<input type='submit' value='Delete'  name='delete' id='delete' onclick="return confirm('Are you sure?');" />
+		  </tr>
+		  </table>
+		  </form>
+
+<?php
+
+
+
+}
+
+?>
+</div>
+<div id="delete_div"> </div>
+<?php
+if(isset($_POST['delete']))
+{
+$id=$_POST['id'];
+//delete where the id number matchs
+$delete_query=mysql_query("delete from USER where USERNAME='$id'");
+//need to close all of that users auctions also so they become inactive or if they have bidders they are instant sales
+//get auction numbers for the auctions of the user that is going to be deleted
+		$get_auctions=mysql_query("select * from AUCTIONS where USERANME='$id'");
+		while($auction_row=mysql_fetch_array($get_auctions))
+		{
+			$auctionnum=$get_auctions['AUCTION_NUM'];
+			//using the auction number to get the max bid
+				$bidder_query=mysql_query("select USERNAME, max(BID) AS BIDS from BIDS where AUCTION_NUM='$auctionnum'");
+				$bidder_row=mysql_fetch_row($bidder_query);
+				$highest_bidder_uname=$bidder_row['0'];
+				$highest_bidder_bid=$bidder_row['1'];
+				$buyer_update=mysql_query("INSERT INTO BUYER VALUES('$highest_bidder_uname', '$auctionnum', '', '', '$highest_bidder_bid', '$date')");
+		}
+
+//locking tables for the update
+		mysql_query("LOCK TABLES AUCTIONS WRITE;");
+		$update_query=mysql_query("UPDATE AUCTIONS  SET ACTIVE='0' where USERNAME='$id'");
+		mysql_query("UNLOCK_TABLES;");
+		if($delete_query)
+		  {
+			
+			?>
+				<script>
+				$('#delete_div').html('The record was deleted.');
+				</script>
+			<?php
+		  }
+		  else
+		  {
+				die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		  }
+
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

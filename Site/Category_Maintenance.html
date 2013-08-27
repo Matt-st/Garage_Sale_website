@@ -1,0 +1,161 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//need to be able to delete modify and add
+//first display a list a of categories
+$categories_query=mysql_query("select * from CATEGORIES ");
+?>
+<table border="1" align="left" >
+			<tr>
+				<td><p>Category</p></td>
+			</tr>
+
+<?php
+while ($row=mysql_fetch_array($categories_query))
+{
+?>
+
+	 <tr>
+	 <td><?php echo "{$row['CATEGORY']}"; ?></td>
+	 </tr>
+<?php
+}
+
+//retrieve
+if(isset($_POST['retrieve']))
+{
+	//pass the value via post
+	$cate=$_POST['cate'];
+	//get the value and id number from database
+	$retrieve_query=mysql_query("select * from CATEGORIES where CATEGORY='$cate'");
+	//check errors
+	if(mysql_num_rows($retrieve_query) < 1)
+	{
+		echo "The record does not exist.";
+	}
+	else
+	{ 
+	$retrieve_row=mysql_fetch_row($retrieve_query);
+	$id_number=$retrieve_row['0'];
+	$cate_name=$retrieve_row['1'];
+	}
+}
+?>
+
+</table>
+<center><h1>Category Maintenance</h1>
+<br><br><br>
+<form method="post">
+<input type="hidden" name="idnum" id="idnum" value="<?=$id_number?>" />
+<label for="cate">Category:</label>
+<input type="text" id="cate" name="cate" value="<?=$cate_name?>" />
+<br>
+<input type="submit" value="Retrieve" name="retrieve" />
+<input type="submit" value="Add" name="add" />
+<input type="submit" value="Modify" name="modify" />
+<input type="submit" value="Delete" name="delete" id="delete_category" onclick="return confirm('Are you sure?');"/>
+<div id="delete_div"></div>
+</form></center>
+<?php
+
+
+
+//add a category
+if(isset($_POST['add']))
+{
+	//post values
+	$catename=$_POST['cate'];
+	//insert query to add it in the database
+	if($catename == NULL)
+	{
+		echo "Please enter a category to add.";
+
+	}
+	else{
+		$cate_insert=mysql_query("INSERT INTO CATEGORIES VALUES('', '$catename')");
+
+	if($cate_insert)
+	  {
+		//successful
+		//header("Location:Category_Maintenance.html");
+		?>
+		<script>
+		$('#delete_div').html('The record was inserted properly.');
+		</script>
+	<?php
+	  }
+	  else
+	  {
+			die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+	  }
+
+	}
+}
+if(isset($_POST['delete']))
+{
+	$category=$_POST['cate'];
+	//see if it exists
+	$exists_query=mysql_query("select * from CATEGORIES where CATEGORY='$category'");
+	//now delete it 
+	$delete_query=mysql_query("delete from CATEGORIES where CATEGORY='$category'");
+	//error checking
+	if(mysql_num_rows($exists_query)> 0)
+	{
+	?>
+		<script>
+		$('#delete_div').html('The record was deleted.');
+		</script>
+	<?php
+	}
+	else
+	{
+	?>
+		<script>
+		$('#delete_div').html('The record does not exist.');
+		</script>
+	<?php
+
+	}
+}
+if(isset($_POST['modify']))
+{
+//get values via posting
+	$id_num=$_POST['idnum'];
+	$category=$_POST['cate'];
+	//check values are not null 
+	if($id_num == NULL || $category == NULL)
+	{
+	?>
+		<script>
+		$('#delete_div').html('The record does not exist.');
+		</script>
+	<?php
+	
+	}
+	else
+	{
+	//perform query to update the information
+	//lock tables
+		mysql_query("LOCK TABLES CATEGORIES WRITE;");
+		$update_query=mysql_query("UPDATE CATEGORIES SET CATEGORY='$category' where CATEGORY_NUM='$id_num'");
+		mysql_query("UNLOCK_TABLES;");
+		if($update_query)
+		  {
+			//successful
+			//header("Location:Category_Maintenance.html");
+			?>
+				<script>
+				$('#delete_div').html('The record was updated.');
+				</script>
+			<?php
+		  }
+		  else
+		  {
+				die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		  }
+	}
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

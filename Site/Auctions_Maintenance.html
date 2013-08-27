@@ -1,0 +1,80 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//deleteing comments
+?>
+<center><h1>Auctions Maintenance</h1></center>
+<div id="sidescroll3">
+<?php
+//need to get all of the images
+$A_query=mysql_query("select * from AUCTIONS");
+while ($row=mysql_fetch_array($A_query))
+{
+$id=$row['AUCTION_NUM'];
+
+?>	
+	<form method="post">
+	<table >
+		<tr>
+		  <td><?php echo "Auction Number:"; echo "{$row['AUCTION_NUM']}"; ?></td>
+		  <td><?php echo "Username:"; echo "{$row['USERNAME']}"; ?></td>
+		  <td><?php echo "Item name:"; echo "{$row['ITEM_NAME']}"; ?></td>
+		  <td><?php echo "Start Price:"; echo "{$row['PRICE']}"; ?></td>
+		  </tr>
+		  <tr>
+		    <td><?php echo "Buy it now price:"; echo "{$row['BUY_IT_NOW_PRICE']}"; ?></td>
+			<td><?php echo "Start Date:"; echo "{$row['START_DATE']}"; ?></td>
+			<td><?php echo "End Date:"; echo "{$row['END_DATE']}"; ?></td>
+			<td><?php echo "End Time:"; echo "{$row['END_TIME']}"; ?></td>
+		  </tr>
+		  <tr>
+		  	<input type="hidden" name="id" id="id" value="<?=$id?>" />
+			<input type='submit' value='Delete'  name='delete' id='delete' onclick="return confirm('Are you sure?');" />
+		  </tr>
+		  </table>
+		  <table>
+		  <tr>
+		  <td><?php echo "Description:"; echo "{$row['DESCRIPTION']}"; ?></td>
+		  </tr>
+		  </table>
+		  </form>
+
+<?php
+
+
+
+}
+
+?>
+</div>
+<div id="delete_div"> </div>
+<?php
+if(isset($_POST['delete']))
+{
+$id=$_POST['id'];
+//delete where the id number matchs
+$delete_query=mysql_query("delete from AUCTIONS where AUCTION_NUM='$id'");
+$delete_image=mysql_query("delete from IMAGE where AUCTION_NUM='$id'");
+$delete_buyer=mysql_query("delete from BUYER where AUCTION_NUM='$id'");
+//need to close all of that users auctions also so they become inactive or if they have bidders they are instant sales
+//get auction numbers for the auctions of the user that is going to be deleted
+	
+		if($delete_query)
+		  {
+			
+			?>
+				<script>
+				$('#delete_div').html('The record was deleted.');
+				</script>
+			<?php
+		  }
+		  else
+		  {
+				die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		  }
+
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

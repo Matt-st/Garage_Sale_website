@@ -1,0 +1,78 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+$categories_query=mysql_query("select * from CATEGORIES ");
+?>
+<table border="1" align="left" >
+			<tr>
+				<td><p>Category</p></td>
+			</tr>
+
+<?php
+while ($row=mysql_fetch_array($categories_query))
+{
+?>
+
+	 <tr>
+	 <td><?php echo "{$row['CATEGORY']}"; ?></td>
+	 </tr>
+<?php
+}
+
+?>
+<h1>Items Sold By Category</h1>
+<br>
+<br>
+<br>
+<form method="post">
+<label for="cate">Category:</label>
+<input type="text" id="cate" name="cate" />
+<input type="submit" value="Search" name="search" />
+</form>
+<br>
+<br>
+<br>
+<?php
+if(isset($_POST['search']))
+{
+$cate=$_POST['cate'];
+?>
+<center><table border="1" >
+			<tr>
+			
+			<td><p>Category</p></td>
+			<td><p>Item Name</p></td>
+			<td><p>Price</p></td>
+			</tr>
+<?php
+
+//need to find the category
+$active_query=mysql_query("select DISTINCT CATEGORIES.CATEGORY, AUCTIONS.ITEM_NAME, BUYER.PURCHASE_PRICE from BUYER, AUCTIONS, CATEGORIES, CATEGORY where BUYER.AUCTION_NUM=AUCTIONS.AUCTION_NUM and 
+BUYER.AUCTION_NUM=CATEGORY.AUCTION_NUM and CATEGORIES.CATEGORY_NUM=CATEGORY.CATEGORY_NUM and CATEGORIES.CATEGORY='$cate' order by BUYER.PURCHASE_PRICE");
+while($row=mysql_fetch_array($active_query))
+{//get auction number
+	$auction_num=$row['AUCTION_NUM'];
+	//query to get teh category
+	
+?>	
+	
+	 <tr>
+	 <td><?php echo "{$row['CATEGORY']}"; ?></td>
+	<td><?php echo "{$row['ITEM_NAME']}"; ?></td>
+	<td><?php echo "{$row['PURCHASE_PRICE']}"; ?></td>
+	  </tr>
+
+
+<?php
+}
+
+
+?>
+</table>
+<?php
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

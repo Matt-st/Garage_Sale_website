@@ -1,0 +1,194 @@
+<?php ob_start(); ?>
+<?php
+include_once 'connect.php';
+session_start();
+?>
+
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+<title>Join Garage Sale</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<!--script for the check username availabiity-->
+<script>
+$(document).ready(function() {
+
+		//the min chars for username
+		var min_chars = 4;
+
+		//result texts
+		var characters_error = 'Minimum amount of chars is 4';
+		var checking_html = 'Checking...';
+
+		//when button is clicked
+		$('#check_username_availability').click(function(){
+			//run the character number check
+			if($('#username').val().length < min_chars){
+				//if it's bellow the minimum show characters_error text '
+				$('#username_availability_result').html(characters_error);
+			}else{
+				//else show the cheking_text and run the function to check
+				$('#username_availability_result').html(checking_html);
+				check_availability();
+			}
+		});
+
+  });
+
+//function to check username availability
+function check_availability(){
+
+		//get the username
+		var username = $('#username').val();
+
+		//use ajax to run the check
+		$.post("check_username.php", { username: username },
+			function(result){
+				//if the result is 1
+				if(result == 1){
+					//show that the username is available
+					$('#username_availability_result').html(username + ' is Available');
+				}else{
+					//show that the username is NOT available
+					$('#username_availability_result').html(username + ' is not Available');
+				}
+		});
+
+}
+
+</script>
+
+
+
+
+<div id="Account_Image_div">
+	
+	<a href="http://mattst.bugs3.com/GarageSale/User_Home.html">
+	<img src="niceGSale.jpg" alt="Home image" /></a>
+	<strong><font size="7" color="#FFFFFF">Join Us</font></strong>
+</div>
+<div id="Account_Body_div">
+	<div id="account_body_inner_div">
+		<form method="post">
+		<div id="Pinfo">
+		Personal Information
+		<br>
+		<label for="fname">First name:</label>
+		<input type="text" id="fname" name="fname" />
+		<label for="lname">Last name:</label>
+		<input type="text" id="lname" name="lname" />
+		<br><br>
+		<label for="street">Address:</label>
+		<input type="text" id="street" name="street" />
+		<label for="city">City:</label>
+		<input type="text" id="city" name="city" />
+		<br><br>
+		<label for="state">State:</label>
+		<input type="text" id="state" name="state" />
+		<label for="zip">Zip Code:</label>
+		<input type="text" id="zip" name="zip" />
+		<br><br>
+		<label for="pnumber">Phone number:</label> 
+		<input type="text" id="pnumber" name="pnumber" />(ex.1234567890 no dashs)
+		<br><br>
+		</div>
+		<div id="Ainfo">
+		Account Information
+		<br>
+		<label for="email">Email:</label>
+		<input type="text" id="email" name="email" />
+		<label for="Cemail">Confirm email:</label>
+		<input type="text" id="Cemail" name="Cemail" />
+		<br><br>
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="username" />
+		<!--button to check the username avaliability-->
+		<input type='button' id='check_username_availability' value='Check Availability'><br>
+		<div id='username_availability_result'></div>
+		<br>
+		<br>
+		<label for="Cuname">Confirm username:</label>
+		<input type="text" id="Cuname" name="Cuname" />
+		<br><br>
+		<label for="pass">Password:</label>
+		<input type="password" id="pass" name="pass" />
+		<label for="Cpassword">Confirm password:</label>
+		<input type="password" id="Cpassword" name="Cpassword" />
+		<br><br>
+		</div>
+		<div id="Tinfo">
+		Terms and Conditions
+		<br>
+		<input type="radio" value="oldenough" name="ageconfirmation" />I am at least 18 years old.<br>
+		<input type="submit" value="Submit Registration" name="submitbutton" />
+		</div>
+		</form>
+		<div id="checking">
+<?php
+if(isset($_POST['submitbutton']))
+{//button has been clicked now we must verify that all of the information is filled out
+	$fname=$_POST['fname'];//first name
+	$lname=$_POST['lname'];//last name
+	$street=$_POST['street'];//street
+	$city=$_POST['city'];//city
+	$state=$_POST['state'];//state
+	$zip=$_POST['zip'];//zip
+	$pnumber=$_POST['pnumber'];//phone number
+	$email=$_POST['email'];//email
+	$Cemail=$_POST['Cemail'];//confirm email
+	$username=$_POST['username'];//username
+	$Cusername=$_POST['Cuname'];//confirm username
+	$password=$_POST['pass'];//password
+	$Cpassword=$_POST['Cpassword'];//confirm password
+	$age=$_POST['ageconfirmation'];//check that radio button has been clicked
+	//now I need to verify that all of the information has been filled out properly
+	if(empty($fname) || empty($lname) || empty($street) || empty($city) || empty($state) || empty($zip) || empty($pnumber) || empty($email) || empty($Cemail) 
+	|| empty($username) || empty($Cusername) || empty($password) || empty($Cpassword) || empty($age))
+	{//checking if any of the fields are empty
+	echo "All fields were not properly filled out.";
+		
+	}
+	if($username != $Cusername)
+	{//checking if username matchs
+		echo "The username does not match.	";
+	
+	}
+	if($email != $Cemail)
+	{	//checking if the emails match
+		echo "<br>";
+		echo "The email addresses do not match.	";
+	}
+	if($password != $Cpassword)
+	{	//checking if the passwords match
+		echo "<br>";
+		echo "The passwords do not match."; 
+	}
+	if((empty($username) && $username != $Cusername) ||(empty($password) && $password != $Cpassword) || (empty($email) && $email != $Cemail) || empty($fname) || empty($lname) ||
+	empty($street) || empty($city) || empty($state) || empty($zip) || empty($pnumber) || empty($age))
+	{//checking if any dont match or if they are also empty
+		//break;
+	}
+	else
+	{//perform the insertion and redirect the user to the home page
+		
+		$query=mysql_query("INSERT INTO USER VALUES('$username', '$fname', '$lname', '$street', '$city', '$state', '$zip', '$pnumber', '$email', '$password', '0')");
+		if($query)
+		{
+			$_SESSION['username']=$username;
+			echo "Updated successfully!";
+			header("location:User_Home.html");
+		}
+		else
+		{
+			die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+		}
+	}
+}
+?>
+		</div>
+	</div>
+</div>	
+</html>
+<?php ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

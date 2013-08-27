@@ -1,0 +1,65 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+?>
+<h1>Category Revenue</h1>
+<center>
+<table border="1">
+			<tr>
+				<td><p>Category</p></td>
+				<td><p>Revenue</p></td>
+			</tr>
+<?php
+///get all the categories
+$cate=mysql_query("select CATEGORY from CATEGORIES");
+while($cate_row=mysql_fetch_array($cate))
+{
+	$category=$cate_row['CATEGORY'];
+//do a query that will get teh sum of revenue per category
+$purchase=mysql_query("select SUM(BUYER.PURCHASE_PRICE) AS TOTAL from BUYER, CATEGORIES, CATEGORY where CATEGORIES.CATEGORY='$category' and CATEGORIES.CATEGORY_NUM=CATEGORY.CATEGORY_NUM AND
+ CATEGORY.AUCTION_NUM=BUYER.AUCTION_NUM  order by SUM(BUYER.PURCHASE_PRICE)");
+$purchase_row=mysql_fetch_row($purchase);
+?>
+<tr>
+ <td><?php  echo "{$cate_row['CATEGORY']}"; ?></td>
+<td><?php  echo "{$purchase_row['0']}"; ?></td>
+</tr>
+<?php
+}
+
+
+
+?>
+
+
+<table border="1" >
+			<tr>
+				<td><p>Total Revenue</p></td>
+			</tr>
+<?php
+//need to do a query to get all the revenue from each category 
+$cate_query=mysql_query("select CATEGORIES.CATEGORY, SUM(BUYER.PURCHASE_PRICE) AS ORDERTOTAL from CATEGORY, CATEGORIES, BUYER WHERE BUYER.AUCTION_NUM=CATEGORY.AUCTION_NUM AND
+ CATEGORY.CATEGORY_NUM=CATEGORIES.CATEGORY_NUM");
+//run a loop to display all the information 
+while($row=mysql_fetch_array($cate_query))
+{
+?>
+ <tr>
+	 
+	<td><?php echo "{$row['ORDERTOTAL']}"; ?></td>
+	 </tr>
+
+<?PHP
+
+
+}
+
+
+
+
+
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,25 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//deleteing comments
+?>
+<table border="1" align="left" >
+			<tr><td><p><a href="Items_Sold_Report.html">Items Sold By Seller</a></p></td></tr>
+			<tr><td><p><a href="Items_Buyer_Report.html">Items Purchased By Buyer</a></p></td></tr>
+			<tr><td><p><a href="Active_Auctions_Report.html">All Active Auctions </a></p></td></tr>
+			<tr><td><p><a href="Inactive_Auctions_Report.html">All Inactive Auctions</a></p></td></tr>
+			<tr><td><p><a href="Items_By_Date_Range_Report.html">All Items Sold By Date Range</a></p></td></tr>
+			<tr><td><p><a href="Sold_By_Amount.html">Items Sold By Amount Range</a></p></td></tr>
+			<tr><td><p><a href="Auctions_Sorted_Cate_Report.html">Items Sold Sorted By Category</a></p></td></tr>
+			<tr><td><p><a href="Sold_By_Cate.html">Items Sold For A Given Category</a></p></td></tr>
+			<tr><td><p><a href="BIN_report.html">Items Sold By Buy It Now Option</a></p></td></tr>
+			<tr><td><p><a href="Cate_Revenue.html">Categories Revenue</a></p></td></tr>
+			<tr><td><p><a href="Access_Log_Report.html">Access Log</a></p></td></tr>
+			</table>
+			<center><h1>Reports</h1></center>
+
+
+<?php
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

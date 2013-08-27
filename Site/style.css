@@ -1,0 +1,214 @@
+/*Style.css*/
+/***********************login.html css*****************/
+#Image_div{
+width: 100%;
+height: 22%;
+position: absolute;
+top: 0%;
+left: 0%;
+background-color: grey;
+}
+img {
+max-width: 200px;
+min-width:50px;
+}
+#body_div{
+width: 100%;
+height: 78%;
+position: absolute;
+top:22%;
+left:0%;
+background-color: #D0D0D0 ;
+}
+form label {
+  display: inline-block;
+  width: 150px;
+  font-weight: bold;
+}
+/************************Create Account.html css*********************/
+#Account_Image_div{
+width: 100%;
+height: 22%;
+position: absolute;
+top: 0%;
+left: 0%;
+background-color: grey;
+}
+#Account_body_div{
+width: 100%;
+height: 100%;
+position: absolute;
+top: 22%;
+left: 0%;
+background-color: #D0D0D0 ;
+background-repeat: repeat;
+}
+#account_body_inner_div{
+height: 100%;
+width: 700px;
+position: absolute;
+top: 0%;
+left: 30%;
+border: 1px solid black;
+
+}
+	#Pinfo{
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 650px;
+	}
+	#Ainfo{
+	position: absolute;
+	top: 25%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 650px;
+	}
+	#Tinfo{
+	position: absolute;
+	top: 50%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 650px;
+	}
+	#checking{
+	position: absolute;
+	top: 60%;
+	left: 5%;
+	}
+	
+/***************************shell.php and footer.php***********************/
+#head{
+width: 100%;
+height: 15%;
+position: absolute;
+top: 0%;
+left: 0%;
+background-color: grey;
+}
+#logo{
+width: 30%;
+height: 15%;
+position: absolute;
+top: 0%;
+left: 20%;
+background-color: grey;
+
+}
+#menu{
+width: 50%;
+height: 25%;
+position: absolute;
+bottom: 50%;
+left: 40%;
+background-color: grey;
+/*border: 1px solid black;*/
+}
+#body{
+width: 100%;
+height: 85%;
+position: absolute;
+top:15%;
+left:0%;
+background-color: #D0D0D0 ;
+}
+#inner_body{
+width: 1200px;
+height: 95%;
+top: 0%;
+left: 20%;
+border: 1px solid black;
+position: absolute;
+}
+#footer{
+position: absolute;
+width: 100%;
+bottom: 0%;
+left: 0%;
+margin:0%;
+
+}
+/*************************user_home.html*************************/
+#auctions{
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 1000px;
+	}
+#bids{
+	position: absolute;
+	top: 50%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 1000px;
+	}
+#sideScroll1{
+position:absolute;
+top:10%;
+left:5%;
+background-color: #FAFAD2;
+border:1px solid black;
+width:85%;
+height:40%;
+overflow-y:scroll;
+overflow-x:hidden;
+}
+#sideScroll2{
+position:absolute;
+top:55%;
+left:5%;
+background-color: #FAFAD2;
+border:1px solid black;
+width:85%;
+height:40%;
+overflow-y:scroll;
+overflow-x:hidden;
+}
+/*************************************categories.html and Purchases.html********************/
+#sideScroll3{
+position:absolute;
+top:15%;
+left:5%;
+background-color: #FAFAD2;
+border:1px solid black;
+width:85%;
+height:80%;
+overflow-y:scroll;
+overflow-x:hidden;
+}
+/********************************************************sell.html********************************/
+#sidescroll4{
+position:absolute;
+top:65%;
+left:5%;
+background-color: #FAFAD2;
+border:1px solid black;
+width:85%;
+height:30%;
+overflow-y:scroll;
+overflow-x:hidden;
+}
+#AE{
+position: absolute;
+	top: 50%;
+	left: 5%;
+	border: 1px solid black;
+	background-color: grey;
+	height: 20px;
+	width: 1000px;
+	
+
+}

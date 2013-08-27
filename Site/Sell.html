@@ -1,0 +1,225 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+$result=mysql_query("select CATEGORY from CATEGORIES");
+while($row=mysql_fetch_array($result)){
+		$category=$row['CATEGORY']; 
+		$options.="<OPTION VALUE=\"$category\">".$category."</option>"; 
+	}
+//get all teh informatio fro the auction then post it and insert it into the the auctions and image table
+	?>
+<?php echo " to Manage Auctions";  ?>
+
+<form method="post" enctype="multipart/form-data">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<select name='categories'>
+				<option value=NULL selected > Select Category </option>
+				<?=$options?>
+			</select>
+			
+			<select name='categories2'>
+				<option value=NULL selected >Select Category</option>
+				<?=$options?>
+			</select>
+			<br>
+	<label for="itemname">Item Name:</label>
+	<input type="text" id="itemname" name="itemname" />
+	<br>
+	<label for="price">Price:</label>
+	<input type="text" id="price" name="price" />
+	<br>
+	<label for="BINprice">Buy it now price:</label>
+	<input type="text" id="BINprice" name="BINprice" />
+	<br>
+	<label for="ET">End time:</label>
+	<input type="text" id="ET" name="ET" />(ex. HH:MM:SS)
+	<br>
+	<label for="ED">End date:</label>
+	<input type="text" id="ED" name="ED" />(ex. year-mm-dd)
+	<br>
+	<label for="file">Filename:</label>
+	<input type="file" name="file" id="file"><br>
+	
+	<br><b>Description:<br>
+	<textarea name="description" cols="50" rows="5">
+	</textarea><br>
+	<input type="submit" value="Create Auction" name="createauction" />
+	</form>
+	<div id="AE">Auction Editor</div>
+<div id="sidescroll2">
+<?php
+$auction_num_query=mysql_query("SELECT DISTINCT AUCTIONS.AUCTION_NUM FROM `AUCTIONS`, `BUYER`, `CATEGORY` WHERE AUCTIONS.ACTIVE='1' AND AUCTIONS.USERNAME='$username' ;");
+while($row=mysql_fetch_array($auction_num_query))
+{
+//now that i have the auction number I can get all of the auctions
+ $auction_num=$row['AUCTION_NUM'];
+ $query=mysql_query("select * from AUCTIONS where AUCTION_NUM='$auction_num'");
+  
+	while($query_row=mysql_fetch_array($query))
+	{//print out all of the auctions in tables
+	$image_query=mysql_query("select * from IMAGE where AUCTION_NUM='$auction_num'");
+	  $bids_query=mysql_query("select * from BIDS where AUCTION_NUM='$auction_num'");
+	    $image_row=mysql_fetch_row($image_query);
+	   $image=$image_row['0'];
+	   
+	?>
+	<form method='post'>
+	<table>
+	 <tr>
+	  <td><?php echo "Item name: "; echo "{$query_row['ITEM_NAME']}"; ?></td>
+	  </tr>
+	 <tr>
+		  <td><?php echo "Buy it now price: "; echo "{$query_row['BUY_IT_NOW_PRICE']}"; ?></td>
+		  <td><?php echo "Seller: "; echo "{$query_row['USERNAME']}"; ?></td>
+		  <td><?php echo "Start Date: "; echo "{$query_row['START_DATE']}"; ?></td>
+		  <td><?php echo "End Date: "; echo "{$query_row['END_DATE']}"; ?></td>
+		  <td><?php echo "Starting price: "; echo "{$query_row['PRICE']}"; ?></td>
+	 </tr>
+	  <tr>
+		  <td><img src="getimage.php?id=<?=$image?>" width="175" height="200"alt="Image not found"></a></td>
+	 </tr>
+	</table>	  
+		<!--table for description I made a new table for formating purposes-->
+	<table>	
+	 <tr>
+		  <td><?php echo "Description: "; echo "{$query_row['DESCRIPTION']}"; ?></td>
+	 </tr>
+	 </table>
+	<table>	 
+	  <tr>
+		<input type="hidden" name="auctionnum" id="auctionnum" value="<?=$auction_num?>" />
+		<input type='submit' value='Delete'  name='delete' id='delete' onclick="return confirm('Are you sure?');" />
+   	 </tr>
+	
+	</table>
+	</form>
+	<?php
+	
+	}
+
+
+
+
+
+}
+if(isset($_POST['delete']))
+{
+//delete auctions based on auction number
+//delete in auctions table
+//delete for images table 
+//delete in categories table
+$auctionnum=$_POST['auctionnum'];
+echo $auctionnum."this is the auction number";
+$auction_delete=mysql_query("DELETE from AUCTIONS where AUCTION_NUM='$auctionnum'");
+ if($auction_delete)
+  {
+	//successful
+  }
+  else
+  {
+		die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+  }
+  mysql_query("DELETE from CATEGORY where AUCTION_NUM='$auctionnum'");
+  mysql_query("DELETE from IMAGE where AUCTION_NUM='$auctionnum'");
+  header("location:Sell.html");
+}
+?>
+</div>
+
+<?php
+//get info after button has been clicked
+if(isset($_POST['createauction']))
+{
+
+	$category=$_POST['categories'];
+	
+	$category2=$_POST['categories2'];
+	$name=$_POST['itemname'];//auction name
+	$price=$_POST['price'];//start price
+	$BINprice=$_POST['BINprice'];//buy it now price
+	$endtime=$_POST['ET'];//user submits end time
+	$enddate=$_POST['ED'];//user submits end date
+	$description=$_POST['description'];//description of the auction
+	$startdate=date("Y-m-d");//get generated start date
+	$newdescription=trim($description);
+	$zero= 0;
+	if(empty($name) || empty($price) || empty($BINprice) || empty($enddate) || empty($newdescription) || empty($startdate) || $category == NULL)
+	{
+		echo "Please fill out all the fields.";
+	}
+	else
+	{//if the fields are not empty then i will insert the auction
+	//I must find the cateogry and hte auction number after I insert
+	//it into the auction then insert that info into other corresponding tables
+		$result=mysql_query("INSERT INTO AUCTIONS VALUES('','$username', '$name', '$newdescription', '$price', '$BINprice', '$startdate', '$enddate', '$endtime','1') ");
+		 if($result)
+					  {
+						//successful
+					  }
+					  else
+					  {
+							die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+					  }
+					  //get teh new auction number
+		$auction_query=mysql_query("select * from AUCTIONS where USERNAME='$username' and ITEM_NAME='$name'");
+		$auction_row=mysql_fetch_row($auction_query);
+		$auctionnum=$auction_row['0'];
+		//get the category based on the name
+		$find_cate=mysql_query("select CATEGORY_NUM from CATEGORIES where CATEGORY='$category'");
+		$cate_row=mysql_fetch_row($find_cate);
+		$catenum=$cate_row['0'];
+		//insert the auction number and the category number
+		$cate_insert=mysql_query("INSERT INTO CATEGORY VALUES('$auctionnum', '$catenum')");
+		//checking if the second category was filled and if so insert it 
+		if($category2 != NULL)
+		{
+			$find_cate2=mysql_query("select CATEGORY_NUM from CATEGORIES where CATEGORY='$category2'");
+		$cate_row2=mysql_fetch_row($find_cate2);
+		$catenum2=$cate_row2['0'];
+		//echo $catenum;
+		$cate_insert2=mysql_query("INSERT INTO CATEGORY VALUES('$auctionnum', '$catenum2')");
+		
+		}
+	}
+	
+	//need to get the generated auction number 
+  
+	//get file that was uploaded
+	if (($_FILES["file"]["error"] > 0)|| empty($name) || empty($price) || empty($BINprice) || empty($enddate) || empty($newdescription) || empty($startdate) || $category == NULL)
+  {
+  //echo "Error: " . $_FILES["file"]["error"] . "<br>";
+  
+  }
+else
+  {
+		
+  
+				  echo "Upload: " . $_FILES["file"]["name"] . "<br>";
+				 // echo "Type: " . $_FILES["file"]["type"] . "<br>";
+				 // echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
+				  //echo "Stored in: " . $_FILES["file"]["tmp_name"];
+				  echo "Auction created refresh the page to display you auction for editing purposes.";
+				  $imgData =addslashes (file_get_contents($_FILES['file']['tmp_name']));
+				   $size = getimagesize($_FILES['file']['tmp_name']);
+				   //$img_name=$_FILES['file']['name'];
+				   $type = $_FILES["file"]["type"];
+				   $sizeof = $size[3];
+				   $image_query = mysql_query("INSERT INTO IMAGE( AUCTION_NUM, IMAGE_TYPE, IMAGE, IMAGE_SIZE) VALUES('$auctionnum','$type', '$imgData', '$sizeof')");
+					  if($image_query)
+					  {
+						//successful
+					  }
+					  else
+					  {
+							die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+					  }
+
+
+	}
+
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,36 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+?>
+  <br>Have a problem?  Get Support!
+<form method="post">
+<br><b>Description:<br>
+	<textarea name="description" cols="100" rows="5">
+	</textarea><br>
+	<input type="submit" value="Submit Ticket" name="ticket" />
+	<div id="support"> </div>
+	
+	</form>
+<?php
+if(isset($_POST['ticket']))
+{
+	$description=$_POST['description'];
+$support_query=mysql_query("INSERT INTO SUPPORT VALUES('','$username','$description')");
+if($support_query)
+  {
+	//successful
+	
+	?>
+				<script>
+				$('#support').html('Thank you for your concern.  Your ticket has been received you will recieve an email shortly containing a resolution to your problems.');
+				</script>
+			<?php
+  }
+  else
+  {
+		die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+  }
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,48 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+?>
+<h1>All Active Auctions</h1>
+<center><table border="1" >
+			<tr>
+			<td><p>Auction Number</p></td>
+			<td><p>Username</p></td>
+			<td><p>Item Name</p></td>
+			<td><p>Description</p></td>
+			<td><p>Price</p></td>
+			<td><p>Buy It Now Price</p></td>
+			<td><p>Start Date</p></td>
+			<td><p>End Date</p></td>
+			<td><p>End Time</p></td>
+			</tr>
+<?php
+$active_query=mysql_query("select * from AUCTIONS where ACTIVE='1'");
+while($row=mysql_fetch_array($active_query))
+{
+	
+	
+?>	
+	
+	 <tr>
+	 <td><?php echo "{$row['AUCTION_NUM']}"; ?></td>
+	 <td><?php echo "{$row['USERNAME']}"; ?></td>
+	  <td><?php echo "{$row['ITEM_NAME']}"; ?></td>
+	  <td><?php echo "{$row['DESCRIPTION']}"; ?></td>
+	  <td><?php echo "{$row['PRICE']}"; ?></td>
+	  <td><?php echo "{$row['BUY_IT_NOW_PRICE']}"; ?></td>
+	  <td><?php echo "{$row['START_DATE']}"; ?></td>
+	  <td><?php echo "{$row['END_DATE']}"; ?></td>
+	  <td><?php echo "{$row['END_TIME']}"; ?></td>
+	  </tr>
+
+
+<?php
+}
+?>
+</table>
+<?php
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

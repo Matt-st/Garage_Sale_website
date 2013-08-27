@@ -1,0 +1,68 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+//buy it now report
+//create table
+?>
+<h1>Items Sold By Date Range</h1>
+<br>
+<br>
+<br>
+<form method="post">
+<label for="date">Date Range:</label>
+<input type="text" id="date1" name="date1" /> To
+<input type="text" id="date2" name="date2" />
+<input type="submit" value="Search" name="search" />
+</form>
+<br>
+<br>
+<br>
+<?php
+if(isset($_POST['search']))
+{
+$date1=$_POST['date1'];
+$date2=$_POST['date2'];
+?>
+<center><table border="1" >
+			<tr>
+			
+			<td><p>Start Date</p></td>
+			<td><p>End Date</p></td>
+			<td><p>Item Name</p></td>
+			<td><p>Price</p></td>
+			<td><p>Usrename</p></td>
+			</tr>
+<?php
+
+//need to find the category
+$active_query=mysql_query("select * from AUCTIONS, BUYER where AUCTIONS.AUCTION_NUM=BUYER.AUCTION_NUM and AUCTIONS.START_DATE >= '$date1' and AUCTIONS.END_DATE <= '$date2'");
+while($row=mysql_fetch_array($active_query))
+{//get auction number
+	$auction_num=$row['AUCTION_NUM'];
+	//query to get teh category
+	
+?>	
+	
+	 <tr>
+	 <td><?php echo "{$row['START_DATE']}"; ?></td>
+	<td><?php echo "{$row['END_DATE']}"; ?></td>
+	<td><?php echo "{$row['ITEM_NAME']}"; ?></td>
+<td><?php echo "{$row['PRICE']}"; ?></td>
+<td><?php echo "{$row['USERNAME']}"; ?></td>	
+
+
+
+	</tr>
+
+
+<?php
+}
+
+
+?>
+</table>
+<?php
+}
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,102 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 
+//get the auctionnumber from purchases then use that to add comments
+$auctionnum=$_SESSION['auctionnum'];
+
+//$auctionnum	
+//do a mysql_query to seee if the user has already made a comment or not on this itme
+$check_query=mysql_query("select * from COMMENTS where AUCTION_NUM='$auctionnum'");
+if(mysql_num_rows($check_query)  < 1)
+{
+?>
+<form method="post">
+<br><b>Add comment<br>
+	<textarea name="description" cols="100" rows="5">
+	</textarea><br>
+	<input type="submit" value="Submit Comment" name="comment" />
+	<div id="Ncomment"></div>
+	</form>
+<?php
+}
+else
+{
+?>
+<form method="post">
+<br><b>Update comment<br>
+	<textarea name="description" cols="100" rows="5">
+	</textarea><br>
+	<input type="submit" value="Update" name="Ucomment" />
+	<div id="update"></div>
+	</form>
+
+
+<?php
+}
+if(isset($_POST['Ucomment']))
+{
+	$description=$_POST['description'];
+//need to update comment
+mysql_query("LOCK TABLES COMMENTS WRITE;");
+$update_query=mysql_query("UPDATE COMMENTS SET COMMENT='$description' where AUCTION_NUM='$auctionnum'");
+mysql_query("UNLOCK_TABLES;");
+if($update_query)
+  {//let the user know the comment was recieved
+  ?>
+				<script>
+				$('#update').html('Thank you for your valued input.');
+				</script>
+			<?php
+			header("Location:Purchases.html");
+	//successful
+  }
+  else
+  {
+		die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+  }
+}
+
+
+
+if(isset($_POST['comment']))
+{
+	$description=$_POST['description'];
+//need to insert comment into comment table
+$comment_query=mysql_query("INSERT INTO COMMENTS VALUES('','$username','$auctionnum','$description')");
+if($comment_query)
+  {//give the user acknowledgement of recieving the commet
+	//successful
+  ?>
+				<script>
+				$('#Ncomment').html('Thank you for your valued input.');
+				</script>
+			<?php
+  
+  }
+  else
+  {
+		die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+  }
+  //retrieve the comment number
+  $getcomment_query=mysql_query("select * from COMMENTS where AUCTION_NUM='$auctionnum'");
+  $comment_row=mysql_fetch_row($getcomment_query);
+  $comment_num=$comment_row['0'];
+//need to update with comment number in buyer table
+mysql_query("LOCK TABLES BUYER WRITE;");
+$update_query=mysql_query("UPDATE BUYER SET COMMENT_NUM='$comment_num' where AUCTION_NUM='$auctionnum'");
+mysql_query("UNLOCK_TABLES;");
+if($update_query)
+  {
+	//successful
+	header("Location:Purchases.html");
+  }
+  else
+  {
+		die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+  }
+}
+?>
+<?php
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

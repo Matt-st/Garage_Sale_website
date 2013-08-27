@@ -1,0 +1,122 @@
+<?php ob_start(); ?>
+<?php
+
+include_once 'connect.php';
+//script to update all auctions
+$now = getdate();
+$time = "$now[hours]:$now[minutes]:$now[seconds]";
+$date = "$now[year]-$now[mon]-$now[mday]";
+$time_int= strtotime($time);
+$date_int= strtotime($date);
+$active_auctions=mysql_query("select * from AUCTIONS where ACTIVE='1'");
+
+ while($active_row=mysql_fetch_array($active_auctions))
+ {
+	$_date=$active_row['END_DATE'];
+	$auction_date_int=strtotime($_date);
+	
+	$_time=$active_row['END_TIME'];
+	$auction_time_int=strtotime($_time);
+	$auction_num_update_active=$active_row['AUCTION_NUM'];
+	
+	//echo $auction_date_int."::auction date v todays date::".$date_int."<br>";
+	//echo $auction_time_int."::auction time v todays time::".$time_int."<br>";
+
+
+ if(($auction_date_int < $date_int) || ($auction_date_int == $date_int && $auction_time_int <= $time_int))
+	{
+		//echo "the auction date is inactive";
+		//lock needed here
+		mysql_query("UPDATE AUCTIONS SET ACTIVE='0' where AUCTION_NUM=$auction_num_update_active ");
+		//need to set the auction as sold in the buyer table also 
+		//highest bidder username
+		$bidder_query=mysql_query("select USERNAME, max(BID) AS BIDS from BIDS where AUCTION_NUM='$auction_num_update_active'");
+		$bidder_row=mysql_fetch_row($bidder_query);
+		$highest_bidder_uname=$bidder_row['0'];
+		$highest_bidder_bid=$bidder_row['1'];
+		$buyer_update=mysql_query("INSERT INTO BUYER VALUES('$highest_bidder_uname', '$auction_num_update_active', '', '', '$highest_bidder_bid', '$date')");
+	
+	}
+	
+ }
+
+
+?>
+<html>
+<head>
+<!--makes the tab name garage sale login-->
+<title>Garage Sale Login</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+<body>
+<div id="Image_div">
+	<center>
+	<img src="niceGSale.jpg" alt="Home image" />
+	</center>
+</div>
+<div id="body_div">
+<center>
+<br><br><br><br><br><br><br>
+	<form method="post">
+	<label for="username">Username:</label>
+	<input type="text" id="username" name="username" />
+	<br>
+	<label for="pass">Password:</label>
+	<input type="password" id="pass" name="pass" />
+	<br><br>
+	<input type="submit" value="Login" name="login" />
+	<br><b>
+	<h3>Not a member of Garage Sale Auctions?
+	<br>
+	Register Now!</h3>
+	<br><br></b>
+	</form>
+	<!--put a link behind the button-->
+	<a href="Create_Account.html">
+	<input type="submit" value="Create Account" name="Caccount" /></a>
+
+	
+
+
+<?php
+if(isset($_POST['login']))
+{//pass info to php variables then run a query and check if there is a match
+	$username=$_POST['username'];
+	$password=$_POST['pass'];
+	
+	//protect from mysql injection
+		$username = stripslashes($username);
+		$password = stripslashes($password);
+		$username = mysql_real_escape_string($username);
+		$password = mysql_real_escape_string($password);
+		
+	$login_query=mysql_query("select * from USER where USERNAME='$username' and PASSWORD='$password'");
+	//check that the query has been matched
+	$rows=mysql_num_rows($login_query);
+	if($rows == 1)
+	{
+	//password and username match 
+	//get security info for admin purposes
+	$login_row=mysql_fetch_row($login_query);
+	$security=$login_row['10'];
+	session_start();
+	$_SESSION['username']=$username;
+	$_SESSION['security']=$security;
+	header("location:User_Home.html");
+	}
+	else{
+	//password or username doesnt match 
+	?>
+	<br>
+	<h3>Login Failed</h3>
+	
+	<?php
+	}
+}
+?>
+</center>	
+</div>
+
+</body>
+</html>
+<?php ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>

@@ -1,0 +1,145 @@
+<?php
+include_once 'shell.php';
+//so I have included everything until the creation of the innner body div 	
+?>
+
+<div id="auctions">
+	<center>Auctions</center>
+	<br>
+	
+</div>
+<div id="sidescroll1">
+	<?php
+ 	$result=mysql_query("select * from AUCTIONS where USERNAME='$username' and ACTIVE='1'");
+	 if($result)
+	  {
+		//successful
+	  }
+	  else
+	  {
+			die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+	  }
+	 	 
+	  while($row=mysql_fetch_array($result))
+	  {
+	   $auctionum=$row['AUCTION_NUM'];
+	  //need to retrieve the auction number and do queries for image and buyer information
+	  
+	  $bids_query=mysql_query("select * from BIDS where AUCTION_NUM='$auctionum'");
+	   $bids_row=mysql_fetch_row($bids_query);
+	  $image_query=mysql_query("select * from IMAGE where AUCTION_NUM='$auctionum'");
+	 
+	  $image_row=mysql_fetch_row($image_query);
+	  $image=$image_row['0'];
+	  
+	   //need to get current bidder and high bid
+	  $bid_query_new=mysql_query("select USERNAME, MAX(BID) from BIDS where AUCTION_NUM='$auctionum'");
+	  $bid_new=mysql_fetch_row($bid_query_new);
+	  $high_bid_new=$bid_new['1'];
+	  $high_bid_query_new=mysql_query("select USERNAME from BIDS where AUCTION_NUM='$auctionum' and BID='$high_bid_new'");
+	  $high_bid_row_new=mysql_fetch_row($high_bid_query_new);
+	  ?>
+	  
+	  <!--table for buy it now seller start and end dates I made a new table for formating purposes-->
+		  <table >
+		   <tr>
+	  <td><?php echo "Item name: "; echo "{$row['ITEM_NAME']}"; ?></td>
+	  </tr>
+		  <tr>
+		  <td><?php echo "Buy it now price: "; echo "{$row['BUY_IT_NOW_PRICE']}"; ?></td>
+		  <td><?php echo "Seller: "; echo "{$row['USERNAME']}"; ?></td>
+		  <td><?php echo "Start Date: "; echo "{$row['START_DATE']}"; ?></td>
+		  <td><?php echo "End Date: "; echo "{$row['END_DATE']}"; ?></td>
+		  <td><?php echo "End Time: "; echo "{$row['END_TIME']}"; ?></td>
+		  </tr>
+		  <tr>
+<td><?php echo "Current Bidder: "; echo "{$high_bid_row_new['0']}"; ?></td>	
+	<td><?php echo "Current Bid: "; echo "{$bid_new['1']}"; ?></td>
+		<td><?php echo "Starting price: "; echo "{$row['PRICE']}"; ?></td>
+	</tr>
+		  <tr>
+		  <td><img src="getimage.php?id=<?=$image?>" width="175" height="200"alt="Image not found"></a></td>
+		  </tr>
+		  </table>
+		<!--table for description I made a new table for formating purposes-->
+		<table>
+		 <tr>
+		  <td><?php echo "Description: "; echo "{$row['DESCRIPTION']}"; ?></td>
+		  </tr>
+		</table>
+	 
+	 <?php
+	  // echo'<img src="mysql_result($image_query, 0)" alt=""></a>';
+	  
+	  }
+	?>
+	</div>
+<div id="bids">
+	<center>Bids</center>
+	<br>
+</div>
+<div id="sidescroll2">
+	<?php
+	$bids_query_new=mysql_query("select AUCTIONS.BUY_IT_NOW_PRICE AS BIN_PRICE, AUCTIONS.START_DATE,AUCTIONS.END_DATE, AUCTIONS.DESCRIPTION, AUCTIONS.USERNAME as SELLER,
+	BIDS.USERNAME as bidder, AUCTIONS.ITEM_NAME, AUCTIONS.START_DATE, AUCTIONS.END_TIME, BIDS.BID, AUCTIONS.PRICE, AUCTIONS.AUCTION_NUM
+	from BIDS, AUCTIONS where BIDS.USERNAME='$username' and AUCTIONS.AUCTION_NUM=BIDS.AUCTION_NUM ");
+	 if($bids_query_new)
+	  {
+		//successful
+	  }
+	  else
+	  {
+			die('<p> Query Error: .<b> ' . mysql_error().'</b></p>');
+	  }
+	 	 
+	  while($bids_row=mysql_fetch_array($bids_query_new))
+	  {
+	  //need to get image id
+	  $bids_auctionnum=$bids_row['AUCTION_NUM'];
+	
+	  $image_query_new=mysql_query("select * from IMAGE where AUCTION_NUM='$bids_auctionnum'");
+	  $image_row_new=mysql_fetch_row($image_query_new);
+	  $image_id=$image_row_new['0'];
+	  //need to get current bidder and high bid
+	  $bid_query=mysql_query("select USERNAME, MAX(BID) from BIDS where AUCTION_NUM='$bids_auctionnum'");
+	  $bid=mysql_fetch_row($bid_query);
+	  $high_bid=$bid['1'];
+	  $high_bid_query=mysql_query("select USERNAME from BIDS where AUCTION_NUM='$bids_auctionnum' and BID='$high_bid'");
+	  $high_bid_row=mysql_fetch_row($high_bid_query);
+	  ?>
+		 <!--table for buy it now seller start and end dates I made a new table for formating purposes-->
+			  <table >
+		   <tr>
+	  <td><?php echo "Item name: "; echo "{$bids_row['ITEM_NAME']}"; ?></td>
+	  </tr>
+		  <tr>
+		  <td><?php echo "Buy it now price: "; echo "{$bids_row['BIN_PRICE']}"; ?></td>
+		  <td><?php echo "Seller: "; echo "{$bids_row['SELLER']}"; ?></td>
+		  <td><?php echo "Start Date: "; echo "{$bids_row['START_DATE']}"; ?></td>
+		  <td><?php echo "End Date: "; echo "{$bids_row['END_DATE']}"; ?></td>
+		  <td><?php echo "End Time: "; echo "{$bids_row['END_TIME']}"; ?></td>
+		  </tr>
+		  <tr>
+<td><?php echo "Current Bidder: "; echo "{$high_bid_row['0']}"; ?></td>	
+	<td><?php echo "Current Bid: "; echo "{$bid['1']}"; ?></td>
+		<td><?php echo "Starting price: "; echo "{$bids_row['PRICE']}"; ?></td>
+	</tr>
+		  <tr>
+		  <td><img src="getimage.php?id=<?=$image_id?>" width="175" height="200"alt="Image not found"></a></td>
+		  </tr>
+		  </table>
+		<!--table for description I made a new table for formating purposes-->
+		<table>
+		 <tr>
+		  <td><?php echo "Description: "; echo "{$bids_row['DESCRIPTION']}"; ?></td>
+		  </tr>
+		</table>
+	<?php
+	  }
+	?>
+	</div>
+
+<?php
+//this is the end of the inner body div and the footer
+include_once 'footer.php';
+ ob_flush();//Flush buffer output ALWAYS AT THE END OF FILE!!!!!!!! ?>
